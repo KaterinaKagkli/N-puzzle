@@ -8,10 +8,12 @@ def main():
     frontier = []
     close_set = []
 
-    # Setting initial state as current state for the first iteration
-    current_state = initial_state
-    children = []
-    children.append(find_children(current_state)) # Used to find neighbors the first time
+    # Starting solution with the initial state as first iteration
+    begin_solution(initial_state)
+
+
+def begin_solution(initial_state):
+    find_children(initial_state)  # Used to find neighbors the first time
 
 
 def set_current_state(frontier):
@@ -24,14 +26,42 @@ def set_frontier(children):
     pass
 
 
-def find_children(current_state):                                    # Finding children(3)
+# Finding children of current (2)
+def find_children(current_state):
+    # Calling neighbors function to locate the neighbors of null, thus locating the children
     neighbors = find_neighbors(current_state)
-    #Todo: swap null with neighbors
+
+    children = []
+    for z in range(len(neighbors)):
+        # Resetting child with current state information after each iteration.
+        # This way, after finding each child we can reset the variable to look for the rest
+        child = current_state
+        # Searching for the null and neighbors to swap them
+        for i in range(3):
+            for j in range(3):
+                if current_state[i][j] is None:
+                    for x in range(3):
+                        for y in range(3):
+                            if current_state[x][y] == neighbors[z]:
+                                child[i][j], child[x][y] = current_state[x][y], current_state[i][j]
+                                children.append(child)
+                                break
+                        else:
+                            continue
+                        break
+                    else:
+                        continue
+                    break
+            else:
+                continue
+            break
+
     #Todo: Set frontier(children)
 
 
-def find_neighbors(current_state):                # Finding neighbors of null cell (2)
-    # Todo: if current_state in close_set:                         # If current state exists in closed set skip this iteration
+# Finding neighbors of null cell (3)
+def find_neighbors(current_state):
+    # Todo: if current_state in close_set:                # If current state exists in closed set skip this iteration
     #     return
     neighbors = []
     for i in range(3):
