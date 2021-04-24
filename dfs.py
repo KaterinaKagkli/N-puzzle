@@ -1,68 +1,95 @@
 import random
 import copy
+import sys
+import math
 
 
 def main():
     initial_state = creating_initial_state()
-    goal = [[1, 4, 7], [2, 5, 8], [3, 6, None]]         # Setting puzzle goal
+    goal = [[1, 2, 3], [4, 5, 6], [7, 8, None]]         # Setting puzzle goal
     frontier = []
+    frontier.insert(0, initial_state)
     close_set = []
 
     # Starting solution with the initial state as first iteration
-    begin_solution(initial_state)
+    begin_solution(frontier, goal, close_set)
 
 
-def begin_solution(initial_state):
-    find_children(initial_state)  # Used to find neighbors the first time
+def begin_solution(frontier, goal, close_set):
+    set_current_state(frontier, goal, close_set)
 
 
-def set_current_state(frontier):
+def set_current_state(frontier, goal, close_set):
     new_current_state = frontier[0]
-    find_children(new_current_state)
+    print_array(new_current_state)
+    # If current state exists in closed set skip to the next in the frontier
+    if new_current_state in close_set:
+        children = []
+        set_frontier(frontier, children, goal, close_set)
+
+    if new_current_state == goal:
+        close_set = set_closed_set(frontier[0], close_set)
+        print("Solution found")
+        for i in close_set:
+            print_array(i)
+            sys.exit()
+    find_children(frontier, new_current_state, goal, close_set)
 
 
-def set_frontier(children):
-    #Todo: append or insert children list (individualy)
-    pass
+def set_frontier(frontier, children, goal, close_set):
+    # Depth first search: prioritizes children
+    close_set = set_closed_set(frontier[0], close_set)
+    if not children:
+        frontier.pop(0)
+        set_current_state(frontier, goal, close_set)
+    else:
+        for i in children:
+            frontier.insert(0, i)
+        set_current_state(frontier, goal, close_set)
+
+
+def set_closed_set(state, close_set):
+    if state not in close_set:
+        close_set.append(state)
+    if len(close_set) == math.factorial(9):
+        print("Max possible combination")
+    return close_set
 
 
 # Finding children of current (2)
-def find_children(current_state):
-    # Calling neighbors function to locate the neighbors of null, thus locating the children
-    neighbors = find_neighbors(current_state)
-
+def find_children(frontier, current_state, goal, close_set):
     children = []
+
+    # Calling neighbors function to locate the neighbors of null, thus locating the children
+    neighbors = find_neighbors(current_state, close_set)
+
     for z in range(len(neighbors)):
         # Resetting child with current state information after each iteration.
         # This way, after finding each child we can reset the variable to look for the rest
-        child = current_state
+        child = copy.deepcopy(current_state)
         # Searching for the null and neighbors to swap them
         for i in range(3):
             for j in range(3):
                 if current_state[i][j] is None:
-                    for x in range(3):
-                        for y in range(3):
-                            if current_state[x][y] == neighbors[z]:
-                                child[i][j], child[x][y] = current_state[x][y], current_state[i][j]
-                                children.append(child)
-                                break
-                        else:
-                            continue
-                        break
-                    else:
-                        continue
                     break
             else:
                 continue
             break
+        for x in range(3):
+            for y in range(3):
+                if current_state[x][y] == neighbors[z]:
+                    child[x][y], child[i][j] = child[i][j], child[x][y]
 
-    #Todo: Set frontier(children)
+                    break
+            else:
+                continue
+            break
+        children.append(child)
 
+    set_frontier(frontier, children, goal, close_set)
 
 # Finding neighbors of null cell (3)
-def find_neighbors(current_state):
-    # Todo: if current_state in close_set:                # If current state exists in closed set skip this iteration
-    #     return
+def find_neighbors(current_state, close_set):
     neighbors = []
     for i in range(3):
         for j in range(3):
@@ -89,7 +116,7 @@ def find_neighbors(current_state):
                         neighbors.append(current_state[i][j + 1])
                         neighbors.append(current_state[i][j - 1])
                     if i == 2:
-                        neighbors.append(current_state[i + 1][j])
+                        neighbors.append(current_state[i][j+1])
                         neighbors.append(current_state[i - 1][j])
                         neighbors.append(current_state[i][j - 1])
                 if j == 2:
@@ -121,7 +148,7 @@ def creating_initial_state():
     return init_state
 
 
-def print_array(e):                                     # Print list as array (N)
+def print_array(e):                              # Print list as array (N)
     for i in range(3):
         for j in range(3):
             if e[i][j] is None:
@@ -129,7 +156,9 @@ def print_array(e):                                     # Print list as array (N
             else:
                 print(e[i][j], end=' ')
         print()
+    print("\n")
 
 
 if __name__ == "__main__":
+    sys.setrecursionlimit(10**9)
     main()
