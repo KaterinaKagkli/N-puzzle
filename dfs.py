@@ -6,6 +6,7 @@ import sys
 def main():
     # Setting initial state
     initial_state = creating_initial_state()
+    # todo: remove debug code
     # initial_state = [[1, 2, 3], [4, 5, 6], [7, None, 8]]
     # Setting puzzle goal
     goal = [[1, 2, 3], [4, 5, 6], [7, 8, None]]
@@ -14,32 +15,39 @@ def main():
     frontier.insert(0, initial_state)
     # Initializing close set
     close_set = []
-    # Starting solution with initial state as first iteration
+    # Starting solution
     solution(frontier, goal, close_set)
 
 
 def solution(frontier, goal, close_set):
-    while True:
-        print("Frontier length")
-        print(len(frontier))
-        current_state = set_current_state(frontier)
-        if current_state == goal:
-            print("Solution found! \nSteps: ")
-            for i in close_set:
-                print_array(i)
-            print_array(goal)
-            print("Solution found! See steps above.")
-            print("Number of steps for solution: ")
-            print(len(close_set))
-            sys.exit()
-        if current_state in close_set:
-            frontier.pop(0)
-        else:
+    # Setting current state as the initial state for first iteration
+    current_state = set_current_state(frontier)
+    while current_state != goal:
+        # Popping first element of frontier (the one that is about to hbe examined)
+        frontier.pop(0)
+        # todo: remove debug code
+        print("Frontier: ", len(frontier), " \t", "Close set: ", len(close_set))
+        # If current state has not been examined yet,
+        # find its children, put them in frontier and insert state in close set
+        if current_state not in close_set:
             children = find_children(current_state)
-            close_set = set_close_set(current_state, close_set)
             frontier = set_frontier(frontier, children)
+            close_set = set_close_set(current_state, close_set)
+        # If frontier is empty, a solution cannot be found
         if not frontier:
             print("Searching frontier is empty. \nCould not find solution. \nExiting program...")
+            sys.exit()
+        current_state = set_current_state(frontier)
+
+    # This code will run only if the above while loop is escaped, meaning, a solution has been found
+    print("Solution found! \nSteps: ")
+    for i in close_set:
+        print_array(i)
+    print_array(goal)
+    print("Solution found! See steps above.")
+    print("Number of steps for solution: ")
+    print(len(close_set))
+    sys.exit()
 
 
 # Setting new current state that is to be examined
@@ -131,9 +139,7 @@ def set_close_set(state, close_set):
 
 # Setting frontier
 def set_frontier(frontier, children):
-    # Popping first element of frontier (the one that was just examined)
-    frontier.pop(0)
-    # Inserting children in frontier. Dfs algorithm prioritizes children, thus, children will be inserted in the front
+    # Inserting children in frontier. Dfs algorithm prioritizes children, thus, children will be inserted first
     for i in children:
         frontier.insert(0, i)
     return frontier
