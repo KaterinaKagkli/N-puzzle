@@ -6,7 +6,7 @@ import sys
 def main():
     # Setting initial state
     initial_state = creating_initial_state()
-    # todo: remove debug code
+    # Debug code
     # initial_state = [[1, 2, 3], [4, 5, 6], [7, None, 8]]
     # Setting puzzle goal
     goal = [[1, 2, 3], [4, 5, 6], [7, 8, None]]
@@ -25,7 +25,7 @@ def solution(frontier, goal, close_set):
     while current_state != goal:
         # Popping first element of frontier (the one that is about to hbe examined)
         frontier.pop(0)
-        # todo: remove debug code
+        # Debug code
         print("Frontier: ", len(frontier), " \t", "Close set: ", len(close_set))
         # If current state has not been examined yet,
         # find its children, put them in frontier and insert state in close set
@@ -96,36 +96,36 @@ def find_neighbors(current_state):
                     if i == 0:
                         neighbors.append(current_state[i + 1][j])
                         neighbors.append(current_state[i][j + 1])
-                    if i == 1:
+                    elif i == 1:
                         neighbors.append(current_state[i + 1][j])
                         neighbors.append(current_state[i - 1][j])
                         neighbors.append(current_state[i][j + 1])
-                    if i == 2:
+                    else:
                         neighbors.append(current_state[i - 1][j])
                         neighbors.append(current_state[i][j + 1])
-                if j == 1:
+                elif j == 1:
                     if i == 0:
                         neighbors.append(current_state[i + 1][j])
                         neighbors.append(current_state[i][j + 1])
                         neighbors.append(current_state[i][j - 1])
-                    if i == 1:
+                    elif i == 1:
                         neighbors.append(current_state[i + 1][j])
                         neighbors.append(current_state[i - 1][j])
                         neighbors.append(current_state[i][j + 1])
                         neighbors.append(current_state[i][j - 1])
-                    if i == 2:
+                    else:
                         neighbors.append(current_state[i][j + 1])
                         neighbors.append(current_state[i - 1][j])
                         neighbors.append(current_state[i][j - 1])
-                if j == 2:
+                else:
                     if i == 0:
                         neighbors.append(current_state[i + 1][j])
                         neighbors.append(current_state[i][j - 1])
-                    if i == 1:
+                    elif i == 1:
                         neighbors.append(current_state[i + 1][j])
                         neighbors.append(current_state[i - 1][j])
                         neighbors.append(current_state[i][j - 1])
-                    if i == 2:
+                    else:
                         neighbors.append(current_state[i - 1][j])
                         neighbors.append(current_state[i][j - 1])
     return neighbors
