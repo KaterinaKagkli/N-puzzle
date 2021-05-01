@@ -1,13 +1,16 @@
+# Kagkli Aikaterini p16037 Kapolos Ioannis p16042
 import random
 import copy
 import sys
+import time
 
 
 def main():
     # Setting initial state
-    initial_state = creating_initial_state()
-    # Debug code
-    # initial_state = [[1, 2, 3], [4, 5, 6], [7, None, 8]]
+    # initial_state = creating_initial_state() # For random initial state
+    initial_state = [[1, 5, 2], [4, None, 3], [7, 8, 6]]
+    print("Initial state: ")
+    print_array(initial_state)
     # Setting puzzle goal
     goal = [[1, 2, 3], [4, 5, 6], [7, 8, None]]
     # Initializing frontier and setting initial state as frontier
@@ -20,13 +23,14 @@ def main():
 
 
 def solution(frontier, goal, close_set):
+    print("Searching for solution.\n This may take some time...")
     # Setting current state as the initial state for first iteration
     current_state = set_current_state(frontier)
     while current_state != goal:
-        # Popping first element of frontier (the one that is about to hbe examined)
+        # Popping first element of frontier (the one that is about to be examined)
         frontier.pop(0)
-        # Debug code
-        print("Frontier: ", len(frontier), " \t", "Close set: ", len(close_set))
+        # Todo: Debug code
+        # print("Frontier: ", len(frontier), " \t", "Close set: ", len(close_set))
         # If current state has not been examined yet,
         # find its children, put them in frontier and insert state in close set
         if current_state not in close_set:
@@ -36,6 +40,7 @@ def solution(frontier, goal, close_set):
         # If frontier is empty, a solution cannot be found
         if not frontier:
             print("Searching frontier is empty. \nCould not find solution. \nExiting program...")
+            print("Execution time: ", time.time() - start_time)
             sys.exit()
         current_state = set_current_state(frontier)
 
@@ -47,6 +52,7 @@ def solution(frontier, goal, close_set):
     print("Solution found! See steps above.")
     print("Number of steps for solution: ")
     print(len(close_set))
+    print("Execution time: ", time.time() - start_time)
     sys.exit()
 
 
@@ -96,39 +102,47 @@ def find_neighbors(current_state):
                     if i == 0:
                         neighbors.append(current_state[i + 1][j])
                         neighbors.append(current_state[i][j + 1])
+                        return neighbors
                     elif i == 1:
                         neighbors.append(current_state[i + 1][j])
                         neighbors.append(current_state[i - 1][j])
                         neighbors.append(current_state[i][j + 1])
+                        return neighbors
                     else:
                         neighbors.append(current_state[i - 1][j])
                         neighbors.append(current_state[i][j + 1])
+                        return neighbors
                 elif j == 1:
                     if i == 0:
                         neighbors.append(current_state[i + 1][j])
                         neighbors.append(current_state[i][j + 1])
                         neighbors.append(current_state[i][j - 1])
+                        return neighbors
                     elif i == 1:
                         neighbors.append(current_state[i + 1][j])
                         neighbors.append(current_state[i - 1][j])
                         neighbors.append(current_state[i][j + 1])
                         neighbors.append(current_state[i][j - 1])
+                        return neighbors
                     else:
                         neighbors.append(current_state[i][j + 1])
                         neighbors.append(current_state[i - 1][j])
                         neighbors.append(current_state[i][j - 1])
+                        return neighbors
                 else:
                     if i == 0:
                         neighbors.append(current_state[i + 1][j])
                         neighbors.append(current_state[i][j - 1])
+                        return neighbors
                     elif i == 1:
                         neighbors.append(current_state[i + 1][j])
                         neighbors.append(current_state[i - 1][j])
                         neighbors.append(current_state[i][j - 1])
+                        return neighbors
                     else:
                         neighbors.append(current_state[i - 1][j])
                         neighbors.append(current_state[i][j - 1])
-    return neighbors
+                        return neighbors
 
 
 # Setting close set
@@ -145,7 +159,7 @@ def set_frontier(frontier, children):
     return frontier
 
 
-# Creating initial state
+# Creating random initial state
 def creating_initial_state():
     # Available numbers that can be used in puzzle
     possible_numbers = [1, 2, 3, 4, 5, 6, 7, 8]
@@ -160,8 +174,6 @@ def creating_initial_state():
                 possible_numbers.remove(x)
                 # Assigning number to puzzle's cell
                 init_state[i][j] = x
-    print("Initial state: ")
-    print_array(init_state)
     return init_state
 
 
@@ -178,4 +190,6 @@ def print_array(e):
 
 
 if __name__ == "__main__":
+    start_time = time.time()
     main()
+    print("Execution time: ", time.time() - start_time)
